@@ -1,15 +1,13 @@
 {
   "name": "staystrong",
   "version": "1.0.0",
-  "description": "",
+  "description": "🌟 Simple API serving motivational reasons to help people through difficult moments. 500+ messages in multiple languages.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Ale1x",
+  "license": "MIT",
   "dependencies": {
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.0"

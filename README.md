@@ -31,7 +31,7 @@ If you're reading this and you're struggling too, know that you're not alone. Th
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/Ale1x/staystrong.git
 cd staystrong
 
 # Install dependencies

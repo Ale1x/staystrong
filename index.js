@@ -2,19 +2,33 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const fs = require('fs');
+const path = require('path');
 
 // App configuration
 const app = express();
 app.set('trust proxy', true);
 const PORT = process.env.PORT || 3000;
 
-// Load data
-const reasons = {
-  en: JSON.parse(fs.readFileSync('./reasons/en.json', 'utf-8')),
-  it: JSON.parse(fs.readFileSync('./reasons/it.json', 'utf-8'))
-};
+// Cache for reasons data
+let reasonsCache = null;
+let supportedLangs = [];
 
-const supportedLangs = Object.keys(reasons);
+// Load and cache reasons data
+function loadReasons() {
+  try {
+
+    const reasonsPath = path.join(__dirname, 'reasons', 'combined.json');
+
+    const data = fs.readFileSync(reasonsPath, 'utf-8');
+
+    reasonsCache = JSON.parse(data);
+
+    supportedLangs = Object.keys(reasonsCache);
+        
+  } catch (error) {
+    console.error('Error loading reasons:', error);
+  }
+}
 
 // Rate limiter configuration
 const limiter = rateLimit({
@@ -29,17 +43,65 @@ const limiter = rateLimit({
 // Apply middleware
 app.use(limiter);
 
+// Optimized random selection function
+function getRandomReason(langReasons) {
+
+  const randomIndex = Math.floor(Math.random() * langReasons.length);
+
+  return langReasons[randomIndex];
+
+}
+
 // Define routes
 app.get('/reasons', (req, res) => {
+  // Check if reasons are loaded
+  if (!reasonsCache) {
+    return res.status(503).json({ error: 'Service temporarily unavailable' });
+  }else{
+
+    // If reasons are not loaded, load them
+    const reasonsPath = path.join(__dirname, 'reasons', 'combined.json');
+
+    const data = fs.readFileSync(reasonsPath, 'utf-8');
+
+    reasonsCache = JSON.parse(data);
+
+    supportedLangs = Object.keys(reasonsCache);
+
+  }
+
   const lang = req.query.lang?.toLowerCase() || 'en';
   const selectedLang = supportedLangs.includes(lang) ? lang : 'en';
 
-  const langReasons = reasons[selectedLang];
-  const reason = langReasons[Math.floor(Math.random() * langReasons.length)];
+  const langReasons = reasonsCache[selectedLang];
+  if (!langReasons || langReasons.length === 0) {
+    return res.status(404).json({ error: 'No reasons found for this language' });
+  }
+
+  const reason = getRandomReason(langReasons);
   res.json({ reason, lang: selectedLang });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`StayStrong is running on port ${PORT}`);
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    languages: supportedLangs,
+    totalReasons: supportedLangs.reduce((total, lang) => total + (reasonsCache[lang]?.length || 0), 0)
+  });
 });
+
+// Start server
+async function startServer() {
+  try {
+    await loadReasons();
+    app.listen(PORT, () => {
+      console.log(`StayStrong is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();

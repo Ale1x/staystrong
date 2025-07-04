@@ -158,6 +158,14 @@ This project aims to be:
 
 **Remember: Seeking help is a sign of strength, not weakness. You matter, and there are people who want to help you through this.** 💜
 
+## 🙏 Contributors
+
+Thanks to everyone who has contributed to making StayStrong better:
+
+- [@isaac0yen](https://github.com/isaac0yen) - Contributed to architecture improvements and code optimization
+
+Want to join our contributors? Check out the [Contributing](#-contributing) section above!
+
 ## 📄 License
 
 This project is open source. Feel free to use it, modify it, and share it to help spread positivity in the world.

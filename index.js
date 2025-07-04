@@ -13,23 +13,6 @@ const PORT = process.env.PORT || 3000;
 let reasonsCache = null;
 let supportedLangs = [];
 
-// Load and cache reasons data
-function loadReasons() {
-  try {
-
-    const reasonsPath = path.join(__dirname, 'reasons', 'combined.json');
-
-    const data = fs.readFileSync(reasonsPath, 'utf-8');
-
-    reasonsCache = JSON.parse(data);
-
-    supportedLangs = Object.keys(reasonsCache);
-
-  } catch (error) {
-    console.error('Error loading reasons:', error);
-  }
-}
-
 // Rate limiter configuration
 const limiter = rateLimit({
   windowMs: 60 * 1000,        // 1 minute window
@@ -43,48 +26,71 @@ const limiter = rateLimit({
 // Apply middleware
 app.use(limiter);
 
-// Optimized random selection function
-function getRandomReason(langReasons) {
+// Setup application routes
+setupRoutes(app);
 
-  const randomIndex = Math.floor(Math.random() * langReasons.length);
+// Start the server
+startServer();
 
-  return langReasons[randomIndex];
+// ========== FUNCTIONS ==========
 
-}
-
-// Define routes
-app.get('/reasons', (req, res) => {
-  // Check if reasons are loaded
-  
-  if (!reasonsCache) {
-    loadReasons();
-    if (!reasonsCache) {
-      return res.status(503).json({ error: 'Service temporarily unavailable' });
+// Load and cache reasons data
+function loadReasons() {
+  try {
+    const reasonsPath = path.join(__dirname, 'reasons', 'combined.json');
+    const data = fs.readFileSync(reasonsPath, 'utf-8');
+    reasonsCache = JSON.parse(data);
+    supportedLangs = Object.keys(reasonsCache);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.error('❌ File combined.json not found. Please run "npm run compile-lang" to compile language files first.');
+    } else {
+      console.error('Error loading reasons:', error.message);
     }
   }
+}
 
-  const lang = req.query.lang?.toLowerCase() || 'en';
-  const selectedLang = supportedLangs.includes(lang) ? lang : 'en';
+// Optimized random selection function
+function getRandomReason(langReasons) {
+  const randomIndex = Math.floor(Math.random() * langReasons.length);
+  return langReasons[randomIndex];
+}
 
-  const langReasons = reasonsCache[selectedLang];
-  if (!langReasons || langReasons.length === 0) {
-    return res.status(404).json({ error: 'No reasons found for this language' });
-  }
+// Function to setup all application routes
+function setupRoutes(app) {
+  // Get random reason endpoint
+  app.get('/reasons', (req, res) => {
+    // Check if reasons are loaded
+    if (!reasonsCache) {
+      loadReasons();
+      if (!reasonsCache) {
+        return res.status(503).json({ error: 'Service temporarily unavailable' });
+      }
+    }
 
-  const reason = getRandomReason(langReasons);
-  res.json({ reason, lang: selectedLang });
-});
+    const lang = req.query.lang?.toLowerCase() || 'en';
+    const selectedLang = supportedLangs.includes(lang) ? lang : 'en';
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    languages: supportedLangs,
-    totalReasons: supportedLangs.reduce((total, lang) => total + (reasonsCache[lang]?.length || 0), 0)
+    const langReasons = reasonsCache[selectedLang];
+    if (!langReasons || langReasons.length === 0) {
+      return res.status(404).json({ error: 'No reasons found for this language' });
+    }
+
+    const reason = getRandomReason(langReasons);
+    res.json({ reason, lang: selectedLang });
   });
-});
 
-// Start server
+  // Health check endpoint
+  app.get('/health', (req, res) => {
+    res.json({
+      status: 'ok',
+      languages: supportedLangs,
+      totalReasons: supportedLangs.reduce((total, lang) => total + (reasonsCache[lang]?.length || 0), 0)
+    });
+  });
+}
+
+// Start server function
 async function startServer() {
   try {
     await loadReasons();
@@ -96,5 +102,3 @@ async function startServer() {
     process.exit(1);
   }
 }
-
-startServer();

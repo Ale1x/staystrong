@@ -24,7 +24,7 @@ function loadReasons() {
     reasonsCache = JSON.parse(data);
 
     supportedLangs = Object.keys(reasonsCache);
-        
+
   } catch (error) {
     console.error('Error loading reasons:', error);
   }
@@ -55,19 +55,12 @@ function getRandomReason(langReasons) {
 // Define routes
 app.get('/reasons', (req, res) => {
   // Check if reasons are loaded
+  
   if (!reasonsCache) {
-    return res.status(503).json({ error: 'Service temporarily unavailable' });
-  }else{
-
-    // If reasons are not loaded, load them
-    const reasonsPath = path.join(__dirname, 'reasons', 'combined.json');
-
-    const data = fs.readFileSync(reasonsPath, 'utf-8');
-
-    reasonsCache = JSON.parse(data);
-
-    supportedLangs = Object.keys(reasonsCache);
-
+    loadReasons();
+    if (!reasonsCache) {
+      return res.status(503).json({ error: 'Service temporarily unavailable' });
+    }
   }
 
   const lang = req.query.lang?.toLowerCase() || 'en';
@@ -84,8 +77,8 @@ app.get('/reasons', (req, res) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     languages: supportedLangs,
     totalReasons: supportedLangs.reduce((total, lang) => total + (reasonsCache[lang]?.length || 0), 0)
   });

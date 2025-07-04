@@ -4,7 +4,8 @@
   "description": "🌟 Simple API serving motivational reasons to help people through difficult moments. 500+ messages in multiple languages.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "compile-lang": "node ./scripts/compile-lang.js"
   },
   "author": "Ale1x",
   "license": "MIT",

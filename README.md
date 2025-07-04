@@ -37,6 +37,9 @@ cd staystrong
 # Install dependencies
 npm install
 
+# Compile language files
+npm run compile-lang
+
 # Start the server
 npm start
 ```
@@ -87,8 +90,8 @@ The API implements rate limiting to ensure fair usage:
 
 ## 🛠️ Technical Details
 
-- **Framework:** Express.js
-- **Rate Limiting:** 100 requests/minute per IP
+- **Framework:** Express.js (^5.1.0)
+- **Rate Limiting:** express-rate-limit (^7.5.0)
 - **Response Format:** JSON
 - **Content-Type:** `application/json`
 - **CORS:** Not configured (add if needed for browser clients)
@@ -101,14 +104,15 @@ Want to help make StayStrong better? Here are some ways to contribute:
 
 1. Create a new JSON file in the `reasons/` directory (e.g., `fr.json` for French)
 2. Add an array of motivational reasons in that language
-3. Update the `reasons` object in `index.js` to include the new language
+3. Run `npm run compile-lang` to update the combined language file
 4. Update the `supportedLangs` documentation
 
 ### Adding More Reasons
 
 1. Edit the appropriate language file in the `reasons/` directory
 2. Add new motivational messages to the JSON array
-3. Ensure all messages are positive, supportive, and appropriate
+3. Run `npm run compile-lang` to update the combined language file
+4. Ensure all messages are positive, supportive, and appropriate
 
 ### Code Improvements
 

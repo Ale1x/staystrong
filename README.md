@@ -53,7 +53,7 @@ The server will start on port 3000 (or the port specified in the `PORT` environm
 **Endpoint:** `GET /reasons`
 
 **Query Parameters:**
-- `lang` (optional): Language code (`en` for English, `it` for Italian (more to come)). Defaults to `en`.
+- `lang` (optional): Language code (`en` for English, `it` for Italian, `de` for German (more to come)). Defaults to `en`.
 
 **Example Requests:**
 
@@ -63,6 +63,9 @@ curl http://localhost:3000/reasons
 
 # Get a reason in Italian
 curl http://localhost:3000/reasons?lang=it
+
+# Get a reason in German
+curl http://localhost:3000/reasons?lang=de
 
 # Get a reason in English (explicit)
 curl http://localhost:3000/reasons?lang=en
@@ -86,6 +89,7 @@ The API implements rate limiting to ensure fair usage:
 ## 🌍 Supported Languages
 
 - **English** (`en`) - 500 motivational reasons
+- **Germany** (`de`) - 500 motivational reasons
 - **Italian** (`it`) - 500 motivational reasons
 
 ## 🛠️ Technical Details

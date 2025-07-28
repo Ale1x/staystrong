@@ -46,6 +46,44 @@ npm start
 
 The server will start on port 3000 (or the port specified in the `PORT` environment variable).
 
+### Docker Deployment
+
+You can also run StayStrong using Docker for easy deployment:
+
+**Using the pre-built image:**
+
+```bash
+# Pull and run the Docker image
+docker run -p 3000:3000 ghcr.io/ale1x/staystrong:latest
+```
+
+**Building locally:**
+
+```bash
+# Build the Docker image
+docker build -t staystrong .
+
+# Run the container
+docker run -p 3000:3000 staystrong
+```
+
+**Using Docker Compose:**
+
+```bash
+# Start the application with Docker Compose
+docker compose up -d
+
+# Stop the application
+docker compose down
+```
+
+The Docker setup includes:
+- Production-ready Node.js environment
+- Health checks for container monitoring
+- Environment variable support
+- Optimized multi-stage build for smaller image size
+- Pre-built image available at `ghcr.io/ale1x/staystrong`
+
 ## 📖 API Usage
 
 ### Get a Random Motivational Reason
@@ -167,6 +205,8 @@ This project aims to be:
 Thanks to everyone who has contributed to making StayStrong better:
 
 - [@isaac0yen](https://github.com/isaac0yen) - Contributed to architecture improvements and code optimization
+- [@LeCyreaxYT](https://github.com/LeCyreaxYT) - Added German translation
+- [@lock-pay](https://github.com/lock-pay) - Added French translation
 
 Want to join our contributors? Check out the [Contributing](#-contributing) section above!
 

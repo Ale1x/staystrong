@@ -1,8 +1,8 @@
 services:
   staystrong:
     image: ghcr.io/ale1x/staystrong:latest
-    ports:
-      - 3000:3000
+    networks:
+      - pangolin-bridge
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -13,3 +13,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+networks:
+  pangolin-bridge:
+    external: true

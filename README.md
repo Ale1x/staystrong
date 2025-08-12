@@ -91,7 +91,7 @@ The Docker setup includes:
 **Endpoint:** `GET /reasons`
 
 **Query Parameters:**
-- `lang` (optional): Language code (`en` for English, `it` for Italian, `de` for German (more to come)). Defaults to `en`.
+- `lang` (optional): Language code (`en` for English, `it` for Italian, `de` for German, `ar` for Arabic (more to come)). Defaults to `en`.
 
 **Example Requests:**
 
@@ -104,6 +104,9 @@ curl http://localhost:3000/reasons?lang=it
 
 # Get a reason in German
 curl http://localhost:3000/reasons?lang=de
+
+# Get a reason in Arabic
+curl http://localhost:3000/reasons?lang=ar
 
 # Get a reason in English (explicit)
 curl http://localhost:3000/reasons?lang=en
@@ -129,6 +132,7 @@ The API implements rate limiting to ensure fair usage:
 - **English** (`en`) - 500 motivational reasons
 - **Germany** (`de`) - 500 motivational reasons
 - **Italian** (`it`) - 500 motivational reasons
+- **Arabic** (`ar`) - 460 motivational reasons
 
 ## 🛠️ Technical Details
 
